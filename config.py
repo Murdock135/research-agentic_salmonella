@@ -2,10 +2,10 @@ import os
 
 class Config:
     # Project root directory
-    BASE_DIR = 'C:/Users/Zayan/Documents/code/personal_repos/research-salmonella_study'
+    # BASE_DIR = 'data/'
 
     # Data directories
-    DATA_DIR = os.path.join(BASE_DIR, 'data')
+    DATA_DIR = 'data/'
     RAW_DATA_DIR = os.path.join(DATA_DIR, 'raw')
     PROCESSED_DATA_DIR = os.path.join(DATA_DIR, 'processed')
     SQL_DATA_DIR = os.path.join(DATA_DIR, 'SQL version')
@@ -18,7 +18,7 @@ class Config:
     CENSUS_DATA_DIR = os.path.join(RAW_DATA_DIR, 'census')
     NORS_DATA_DIR = os.path.join(RAW_DATA_DIR, 'nors')
     FOODNET_DATA_DIR = os.path.join(RAW_DATA_DIR, 'foodnet')
-    SOCIOECONO_SALMONELLA_DIR = os.path.join(PROCESSED_DATA_DIR, 'salmonella_population')
+    # SOCIOECONO_SALMONELLA_DIR = os.path.join(PROCESSED_DATA_DIR, 'salmonella_population')
 
     # Output directories
     # RESULTS_DIR = os.path.join(BASE_DIR, 'results')
