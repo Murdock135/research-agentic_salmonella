@@ -8,13 +8,12 @@ from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_openai import ChatOpenAI
 
-# Note: Step 0 through 3 are the same as- 12_querying_csv.py
-# Step 0: load environment variables
-_ = load_dotenv(find_dotenv())
 
 # Load data
 state = 'MO'
 year = '2020'
+
+# TODO: MAKE A DATA DIR AND CHANGE THIS
 data_path = os.path.join(Config.SOCIOECONO_SALMONELLA_DIR, f'sense-d_socioecono_salmonella_{state}_{year}.csv')
 df = pd.read_csv(data_path)
 
@@ -46,3 +45,7 @@ agent_executor = create_sql_agent(model, db=db, agent_type="openai-tools", verbo
 # Invoke agent
 response = agent_executor.invoke({"input": "which county has the highest salmonella rate?"})
 print(response)
+
+if __name__=="__main__":
+    _ = load_dotenv(find_dotenv())
+    breakpoint()
