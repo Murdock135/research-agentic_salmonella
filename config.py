@@ -2,7 +2,8 @@ import os
 
 class Config:
     # Project root directory
-    BASE_DIR = 'C:/Users/Zayan/Documents/code/personal_repos/research-salmonella_study'
+    BASE_DIR = os.path.abspath(__file__) 
+    
 
     # Data directories
     DATA_DIR = os.path.join(BASE_DIR, 'data')
