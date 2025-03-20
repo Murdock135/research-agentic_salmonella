@@ -5,7 +5,7 @@ from langchain_ollama import ChatOllama
 
 if __name__=="__main__":
     # load data
-
+    breakpoint()
     print(0)
 
 
