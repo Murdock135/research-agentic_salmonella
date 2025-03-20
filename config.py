@@ -2,7 +2,7 @@ import os
 
 class Config:
     # Project root directory
-    BASE_DIR = os.path.abspath(__file__) 
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     
 
     # Data directories
@@ -25,4 +25,21 @@ class Config:
     # RESULTS_DIR = os.path.join(BASE_DIR, 'results')
     # FIGURES_DIR = os.path.join(RESULTS_DIR, 'figures')
     # REPORTS_DIR = os.path.join(RESULTS_DIR, 'reports')
+
+    # Selected data directory
+    SELECTED_DATA_DIR = os.path.join(BASE_DIR, 'selected_data')
+    
+    # Selected dataset paths
+    SELECTED_MMG_DIR = os.path.join(SELECTED_DATA_DIR, 'mmg')
+    SELECTED_NORS_DIR = os.path.join(SELECTED_DATA_DIR, 'nors')
+    SELECTED_SVI_DIR = os.path.join(SELECTED_DATA_DIR, 'svi')
+    SELECTED_SOCIOECONO_SALMONELLA = os.path.join(SELECTED_DATA_DIR, 'sense-d_socioecono_salmonella_MO_2020.csv')
+    
+    def get_selected_data_paths(self):
+        return {
+            'mmg': self.SELECTED_MMG_DIR,
+            'nors': self.SELECTED_NORS_DIR,
+            'svi': self.SELECTED_SVI_DIR,
+            'socioecono_salmonella': self.SELECTED_SOCIOECONO_SALMONELLA
+        }
 
