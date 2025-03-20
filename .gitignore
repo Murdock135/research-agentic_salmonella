@@ -192,6 +192,7 @@ data/
 *.json
 *.h5
 *.pkl
+*.xlsx
 
 # Model files
 models/
