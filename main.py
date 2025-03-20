@@ -16,11 +16,11 @@ if __name__=="__main__":
             with open(planner_prompt_path, 'r') as file:
                 planner_prompt_text = file.read()
             prompt_template = ChatPromptTemplate.from_template(planner_prompt_text)
-            planner_prompt = prompt_template.format_messages(data_path)
+            planner_prompt = prompt_template.format_messages(data_path=data_path)
         else:
             raise Exception("path to the system message file not found")
     except Exception as e:
-        print("The system prompt for the planner LLM not found")
+        print("Exception occured: ", e)
 
     breakpoint()
 
