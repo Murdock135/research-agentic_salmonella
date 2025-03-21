@@ -1,9 +1,24 @@
 import os
 import pandas as pd
 
+from typing import List
 from config import Config
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import load_prompt, ChatPromptTemplate
+from pydantic import BaseModel, Field
+
+# Define desired output structure
+class Step(BaseModel):
+    step_description: str = Field(..., description="Description of the analytical step")
+    datasets: List = Field(..., description="Datasets used")
+    rationale: str = Field(..., description="Why this step is necessary")
+    task_type: str = Field(..., description="The type of computation required e.g. data_retrieval, correlation, visualization")
+    
+class Plan(BaseModel):
+    steps: List[Step]
+
+parser = PydanticOutputParser(pydantic_object=Plan)
+format_instructions = parser.get_format_instructions()
 
 if __name__=="__main__":
     config = Config()
