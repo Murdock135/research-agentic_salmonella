@@ -4,6 +4,7 @@ import pandas as pd
 from typing import List
 from config import Config
 from langchain_ollama import ChatOllama
+from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import load_prompt, ChatPromptTemplate
 from pydantic import BaseModel, Field
 
@@ -17,12 +18,17 @@ class Step(BaseModel):
 class Plan(BaseModel):
     steps: List[Step]
 
+# Obtain formatting instructions
 parser = PydanticOutputParser(pydantic_object=Plan)
 format_instructions = parser.get_format_instructions()
 
 if __name__=="__main__":
     config = Config()
     data_path = config.SELECTED_DATA_DIR
+
+    # get user query
+    user_query = input("Enter your query: \n")
+    print("User Has asked: \n", user_query)
 
     # Load prompts
     try:
@@ -31,7 +37,7 @@ if __name__=="__main__":
             with open(planner_prompt_path, 'r') as file:
                 planner_prompt_text = file.read()
             prompt_template = ChatPromptTemplate.from_template(planner_prompt_text)
-            planner_prompt = prompt_template.format_messages(data_path=data_path)
+            prompt_template = prompt_template.partial(format_instructions=format_instructions)
         else:
             raise Exception("path to the system message file not found")
     except Exception as e:
@@ -44,16 +50,16 @@ if __name__=="__main__":
     #    max_tokens = 200
 
     llm=ChatOllama(model="llama3.2:latest")
+    
+    # create chain
+    chain = prompt_template | llm | parser
+   
+    # get response
+    inputs = {
+           "user_query": user_query,
+           "data_path": data_path
+           }
 
-    messages = [
-        (
-            "system",
-            "You are a helpful assistant that translates English to Malay. Translate the user's sentence"
-        ),
-        ("human", "I love programming."),
-    ]
+    response = chain.invoke(inputs)
 
-    ai_msg = llm.invoke(messages)
-    print(ai_msg)
-
-
+    print("Response: \n", response)
