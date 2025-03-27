@@ -19,10 +19,7 @@ class Step(BaseModel):
 class Plan(BaseModel):
     steps: List[Step]
 
-if __name__=="__main__":
-    config = Config()
-    data_path = config.SELECTED_DATA_DIR
-
+def get_user_query():
     # For testing, use a hardcoded query if one is provided as argument
     if len(sys.argv) > 1 and sys.argv[1] == "--test":
         user_query = "What is the correlation between social vulnerability and salmonella rates in Missouri?"
@@ -30,16 +27,21 @@ if __name__=="__main__":
     else:
         # get user query
         user_query = input("Enter your query: \n")
-    
-    print("User Has asked: \n", user_query)
 
-    # Load prompts
-    system_prompts_dict = config.get_prompt_paths()
-    breakpoint()
+    return user_query
+    
+
+if __name__=="__main__":
+    config = Config()
+    system_prompts_dict = config.get_prompt_paths() # load system prompts
+    data_path = config.SELECTED_DATA_DIR # set path to data
 
     # Create prompt template
-    prompt_template = PromptTemplate.from_template(planner_prompt_text)
-    
+    prompt_template = PromptTemplate.from_template(system_prompts_dict['planner_prompt'])
+
+    # Get user query
+    user_query = get_user_query()
+       
     # Test if prompt is properly templated
     inputs = {
             "data_path": data_path,
