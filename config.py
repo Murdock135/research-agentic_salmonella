@@ -42,4 +42,10 @@ class Config:
             'svi': self.SELECTED_SVI_DIR,
             'socioecono_salmonella': self.SELECTED_SOCIOECONO_SALMONELLA
         }
+    
+    def get_prompt_paths(self):
+        prompts_dir = os.path.join(self.BASE_DIR, 'sys_messages')
 
+        return {
+            "prompt_planner" : os.path.join(prompts_dir, 'planner_message.txt')
+        }

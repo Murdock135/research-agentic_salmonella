@@ -34,12 +34,8 @@ if __name__=="__main__":
     print("User Has asked: \n", user_query)
 
     # Load prompts
-    planner_prompt_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sys_messages', 'message_planner.txt')
-    if os.path.exists(planner_prompt_path):
-        with open(planner_prompt_path, 'r') as file:
-            planner_prompt_text = file.read().strip()
-    else:
-        raise Exception("path to the system message file not found")
+    system_prompts_dict = config.get_prompt_paths()
+    breakpoint()
 
     # Create prompt template
     prompt_template = PromptTemplate.from_template(planner_prompt_text)
