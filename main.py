@@ -30,14 +30,29 @@ def get_user_query():
 
     return user_query
     
+def load_prompts(prompt_paths_dict):
+    planner_prompt_path = prompt_paths_dict['planner_prompt_path'] 
+    # code for other prompt paths here
+
+    # complete the dict later
+    prompt_dict = {
+            'planner_prompt': None,
+            }
+
+    with open(planner_prompt_path, 'r') as f:
+        prompt_dict['planner_prompt'] = f.read()
+
+    return prompt_dict 
+
 
 if __name__=="__main__":
     config = Config()
-    system_prompts_dict = config.get_prompt_paths() # load system prompts
+    prompt_paths = config.get_prompt_paths() # load system prompts
+    prompts :dict[str, str] = load_prompts(prompt_paths) # load prompts. store in a dictionary
     data_path = config.SELECTED_DATA_DIR # set path to data
 
     # Create prompt template
-    prompt_template = PromptTemplate.from_template(system_prompts_dict['planner_prompt'])
+    prompt_template = PromptTemplate.from_template(prompts['planner_prompt'])
 
     # Get user query
     user_query = get_user_query()
@@ -54,6 +69,7 @@ if __name__=="__main__":
     # llm parameters
     #    temperature = 0
     #    max_tokens = 200
+    breakpoint()
 
     llm=ChatOllama(model="llama3.2:latest", temperature=0)
     structured_llm = llm.with_structured_output(Plan, include_raw=True)    

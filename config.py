@@ -47,5 +47,5 @@ class Config:
         prompts_dir = os.path.join(self.BASE_DIR, 'sys_messages')
 
         return {
-            "planner_prompt" : os.path.join(prompts_dir, 'planner_message.txt')
+            "planner_prompt_path" : os.path.join(prompts_dir, 'planner_message.txt')
         }
