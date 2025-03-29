@@ -58,19 +58,32 @@ if __name__=="__main__":
             [
                 ("system", prompts['planner_prompt']),
                 ("human", "{user_query}")
-            ]).partial(data_path = data_path)
-    breakpoint()
+            ])
        
-    prompt = prompt_template.format(data_path=data_path,
-                                    user_query=user_query)
     # llm parameters
     #    temperature = 0
     #    max_tokens = 200
     breakpoint()
 
-    llm=ChatOllama(model="llama3.2:latest", temperature=0)
-    structured_llm = llm.with_structured_output(Plan, include_raw=True)    
+    llm=ChatOllama(model="llama3.2:latest", temperature=0) # instantiate language model
+    structured_llm = llm.with_structured_output(Plan, include_raw=True) 
+    chain = prompt | structured_llm
 
     # get response
-    response = structured_llm.invoke(prompt) 
-    print(response)
+    response = chain.invoke(
+                {"user_query":user_query,
+                "data_path":data_path},
+            ) 
+    
+    # Print the response in a readable format
+    if response and hasattr(response, 'steps') and response.steps:
+        print("Generated Analysis Plan:")
+        for i, step in enumerate(response.steps, 1):
+            print(f"\nStep {i}:")
+            print(f"Description: {step.step_description}")
+            print(f"Datasets: {', '.join(step.datasets)}")
+            print(f"Rationale: {step.rationale}")
+            print(f"Task Type: {step.task_type}")
+    else:
+        print("No analysis steps were generated.")
+        print("Response details:", response)
