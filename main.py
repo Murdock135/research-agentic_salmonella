@@ -50,20 +50,17 @@ if __name__=="__main__":
     prompt_paths = config.get_prompt_paths() # load system prompts
     prompts :dict[str, str] = load_prompts(prompt_paths) # load prompts. store in a dictionary
     data_path = config.SELECTED_DATA_DIR # set path to data
+    user_query = get_user_query() # user query
 
     # Create prompt template
-    prompt_template = PromptTemplate.from_template(prompts['planner_prompt'])
-
-    # Get user query
-    user_query = get_user_query()
+#    prompt_template = PromptTemplate.from_template(prompts['planner_prompt'])
+    prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", prompts['planner_prompt']),
+                ("human", "{user_query}")
+            ]).partial(data_path = data_path)
+    breakpoint()
        
-    # Test if prompt is properly templated
-    inputs = {
-            "data_path": data_path,
-            "user_query": user_query
-            }
-
-    print("Prompt:\n", prompt_template.invoke(inputs).to_string())
     prompt = prompt_template.format(data_path=data_path,
                                     user_query=user_query)
     # llm parameters
