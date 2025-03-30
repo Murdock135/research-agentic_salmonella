@@ -44,9 +44,7 @@ def load_prompts(prompt_paths_dict):
 
     return prompt_dict 
 
-
-if __name__=="__main__":
-    config = Config()
+def get_plan(config: Config):
     prompt_paths = config.get_prompt_paths() # load system prompts
     prompts :dict[str, str] = load_prompts(prompt_paths) # load prompts. store in a dictionary
     data_path = config.SELECTED_DATA_DIR # set path to data
@@ -71,4 +69,10 @@ if __name__=="__main__":
 
     # get response
     response = chain.invoke({"user_query": user_query})  
-    print(response)
+    return response
+
+if __name__ == "__main__":
+    config = Config()
+    plan = get_plan(config)
+
+    print(plan)
