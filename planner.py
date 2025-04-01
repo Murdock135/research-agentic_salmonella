@@ -1,3 +1,4 @@
+import datetime
 import os
 import pandas as pd
 import sys
@@ -51,7 +52,7 @@ def get_plan(config: Config):
     user_query = get_user_query() # user query
 
     # Create prompt template
-#    prompt_template = PromptTemplate.from_template(prompts['planner_prompt'])
+    # prompt_template = PromptTemplate.from_template(prompts['planner_prompt'])
     prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", prompts['planner_prompt']),
@@ -75,4 +76,12 @@ if __name__ == "__main__":
     config = Config()
     plan = get_plan(config)
 
-    print(plan)
+    print(plan.content)
+    
+    # Save response
+    now = datetime.datetime.now()
+    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+    filename = os.path.join(config.PLANNER_RESPONSES_DIR, f"p_response_{timestamp}.txt")
+
+    with open(filename, 'w') as f:
+        f.write(plan.content)

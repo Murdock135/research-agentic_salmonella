@@ -22,7 +22,10 @@ class Config:
     SOCIOECONO_SALMONELLA_DIR = os.path.join(PROCESSED_DATA_DIR, 'salmonella_population')
 
     # Output directories
-    # RESULTS_DIR = os.path.join(BASE_DIR, 'results')
+    RESPONSES_DIR = os.path.join(BASE_DIR, 'responses')
+    PLANNER_RESPONSES_DIR = os.path.join(RESPONSES_DIR, 'planner')
+    EXECUTOR_RESPONSES_DIR = os.path.join(RESPONSES_DIR, 'executor')
+    AGGREGATOR_RESPONSES_DIR = os.path.join(RESPONSES_DIR, 'aggregator')
     # FIGURES_DIR = os.path.join(RESULTS_DIR, 'figures')
     # REPORTS_DIR = os.path.join(RESULTS_DIR, 'reports')
 
