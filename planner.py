@@ -8,16 +8,18 @@ from langchain_ollama import ChatOllama
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.exceptions import OutputParserException
 from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTemplate
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 # Define desired output structure
 class Step(BaseModel):
+    """Information about a step"""
     step_description: str = Field(..., description="Description of the analytical step")
     datasets: List[str] = Field(..., description="List of dataset names used")
     rationale: str = Field(..., description="Why this step is necessary")
     task_type: str = Field(..., description="The type of computation required e.g. data_retrieval, correlation, visualization")
     
 class Plan(BaseModel):
+    """Information about the the steps in a plan to answer the user query"""
     steps: List[Step]
 
 def get_user_query():
@@ -51,13 +53,19 @@ def get_plan(config: Config):
     data_path = config.SELECTED_DATA_DIR # set path to data
     user_query = get_user_query() # user query
 
+    # Format instructions
+    try:
+        format_instructions = PydanticOutputParser(pydantic_object=Plan).get_format_instructions()
+    except Exception as e:
+        print("Couldn't get formatting instructions. Exception: ", e)
+
     # Create prompt template
     # prompt_template = PromptTemplate.from_template(prompts['planner_prompt'])
     prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", prompts['planner_prompt']),
                 ("human", "{user_query}")
-            ]).partial(data_path=data_path)
+            ]).partial(data_path=data_path, format_instructions=format_instructions) 
        
     # llm parameters
     #    temperature = 0

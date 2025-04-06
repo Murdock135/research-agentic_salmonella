@@ -17,10 +17,7 @@ Return your plan as a JSON-compatible list of steps. Each step **must adhere to 
 - `step_description` (str): A detailed description of what should be done in the step.
 - `datasets` (list of str): The datasets relevant to the step.
 - `rationale` (str): The reason why this step is necessary.
-- `task_type` (list of str): The types of analytical operations this step represents. Examples include:
-  - `data aggregation`
-  - `data modelling`
-  - `data exploration`
+- `task_type` (str): The type of analytical operation this step represents. Examples include:
   - `data_retrieval`
   - `filtering`
   - `statistical_analysis`
@@ -39,4 +36,31 @@ Your Task:
 
 ---
 
-{format_instructions}
+Example Query:
+"How does food insecurity relate to salmonella outbreak rates in Missouri counties?"
+
+In this case, relevant steps may include retrieving county-level data from MaptheMealGap and PulseNet, computing correlation between food insecurity and salmonella rates, and ranking counties based on correlation strength.
+
+Example Output:
+```json
+[
+  {{
+      "step_description": "Read and retrieve county-level data from the PulseNet dataset and the MaptheMealGap dataset.",
+      "datasets": ["PulseNet", "MaptheMealGap"],
+      "rationale": "To combine datasets containing information on salmonella outbreak rates and food insecurity for each county in Missouri.",
+      "task_type": "data_retrieval"
+  }},
+  {{
+      "step_description": "Compute the correlation between food insecurity and salmonella outbreak rates in Missouri counties.",
+      "datasets": ["MaptheMealGap", "PulseNet"],
+      "rationale": "To understand the relationship between food insecurity and salmonella rates, which may provide insights into vulnerable populations.",
+      "task_type": "correlation"
+  }},
+  {{
+      "step_description": "Rank counties based on the strength of the correlation between food insecurity and salmonella outbreak rates.",
+      "datasets": [],
+      "rationale": "To prioritize counties for further analysis or intervention.",
+      "task_type": "ranking"
+  }}
+]
+
