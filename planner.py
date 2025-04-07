@@ -19,7 +19,7 @@ class Step(BaseModel):
     step_description: str = Field(..., description="Description of the analytical step")
     datasets: List[str] = Field(..., description="List of dataset names used")
     rationale: str = Field(..., description="Why this step is necessary")
-    task_type: str = Field(..., description="The type of computation required e.g. data_retrieval, correlation, visualization")
+    task_type: List[str] = Field(..., description="The type of computation required e.g. data_retrieval, correlation, visualization")
     
 class Plan(BaseModel):
     """Information about the the steps in a plan to answer the user query"""
@@ -77,9 +77,9 @@ def get_user_query(args):
 
     return user_query
        
-def get_plan(llm, prompt, user_query):
+def get_plan(llm, prompt, user_query, parser):
               
-    chain = prompt | llm
+    chain = prompt | llm | parser
 
     # get response
     response = chain.invoke({"user_query": user_query})  
@@ -94,10 +94,13 @@ if __name__ == "__main__":
     prompts: dict[str, str] = load_prompts(prompt_paths)
     data_path = config.SELECTED_DATA_DIR
     user_query = get_user_query(args)
-    
+   
+    # Parser
+    parser = PydanticOutputParser(pydantic_object=Plan)
+
     # Format instructions
     try:
-        format_instructions = PydanticOutputParser(pydantic_object=Plan).get_format_instructions()
+        format_instructions = parser.get_format_instructions()
     except Exception as e:
         print("Couldn't get formatting instructions. Exception: ", e)
 
@@ -107,9 +110,9 @@ if __name__ == "__main__":
                 ("human", "{user_query}")
             ]).partial(data_path=data_path, format_instructions=format_instructions) 
 
-    plan = get_plan(llm, prompt, user_query)
+    plan = get_plan(llm, prompt, user_query, parser)
 
-    print(plan.content)
+    print(plan)
     
     # Save response
     now = datetime.datetime.now()
@@ -117,4 +120,4 @@ if __name__ == "__main__":
     filename = os.path.join(config.PLANNER_RESPONSES_DIR, f"p_response_{timestamp}.txt")
 
     with open(filename, 'w') as f:
-        f.write(plan.content)
+        f.write(str(plan))
