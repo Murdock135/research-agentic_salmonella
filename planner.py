@@ -25,17 +25,7 @@ class Plan(BaseModel):
     """Information about the the steps in a plan to answer the user query"""
     steps: List[Step]
 
-def get_user_query():
-    # For testing, use a hardcoded query if one is provided as argument
-    if len(sys.argv) > 1 and sys.argv[1] == "--test":
-        user_query = "What is the correlation between social vulnerability and salmonella rates in Missouri?"
-        print("Using test query: ", user_query)
-    else:
-        # get user query
-        user_query = input("Enter your query: \n")
 
-    return user_query
-    
 def load_prompts(prompt_paths_dict):
     planner_prompt_path = prompt_paths_dict['planner_prompt_path'] 
     # code for other prompt paths here
@@ -55,7 +45,7 @@ def parse_args():
     parser.add_argument('--test', action="store_true", help="Use a test query")
     parser.add_argument('--ollama', action="store_true", help="Use ollama backend")
     parser.add_argument('--openrouter', action="store_true", help="Use openrouter backend")
-    parser.add_arugment("--model", type=str, help="Model name")
+    parser.add_argument("--model", type=str, help="Model name")
     return parser.parse_args()
 
 def get_llm(args):
@@ -67,7 +57,7 @@ def get_llm(args):
     if args.openrouter:
         api_key = os.getenv("OPENROUTER_API_KEY")
         base_url = os.getenv("OPENROUTER_BASE_URL")
-        
+        breakpoint()        
         return ChatOpenAI(
                 openai_api_key=api_key,
                 openai_api_base=base_url,
@@ -76,34 +66,19 @@ def get_llm(args):
 
     elif args.ollama:
         return ChatOllama(model="gemma3:12b")    
-        
-def get_plan(config: Config):
-    prompt_paths = config.get_prompt_paths() # load system prompts
-    prompts :dict[str, str] = load_prompts(prompt_paths) # load prompts. store in a dictionary
-    data_path = config.SELECTED_DATA_DIR # set path to data
-    user_query = get_user_query() # user query
 
-    # Format instructions
-    try:
-        format_instructions = PydanticOutputParser(pydantic_object=Plan).get_format_instructions()
-    except Exception as e:
-        print("Couldn't get formatting instructions. Exception: ", e)
+def get_user_query(args):
+    if args.test:
+        user_query = "What is the correlation between social vulnerability and salmonella rates?"
+        print("Using test query: ", user_query)
+    else:
+        while True:
+            user_query = input("Enter your query:\n")
 
-    # Create prompt template
-    # prompt_template = PromptTemplate.from_template(prompts['planner_prompt'])
-    prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", prompts['planner_prompt']),
-                ("human", "{user_query}")
-            ]).partial(data_path=data_path, format_instructions=format_instructions) 
+    return user_query
        
-    # llm parameters
-    #    temperature = 0
-    #    max_tokens = 200
-    breakpoint()
-
-    llm=ChatOllama(model="llama3.2:latest", temperature=0) # instantiate language model
-    # structured_llm = llm.with_structured_output(Plan, include_raw=True) 
+def get_plan(llm, prompt, user_query):
+              
     chain = prompt | llm
 
     # get response
@@ -111,9 +86,28 @@ def get_plan(config: Config):
     return response
 
 if __name__ == "__main__":
+    args = parse_args()
     load_dotenv()
     config = Config()
-    plan = get_plan(config)
+    llm = get_llm(args)
+    prompt_paths = config.get_prompt_paths()
+    prompts: dict[str, str] = load_prompts(prompt_paths)
+    data_path = config.SELECTED_DATA_DIR
+    user_query = get_user_query(args)
+    
+    # Format instructions
+    try:
+        format_instructions = PydanticOutputParser(pydantic_object=Plan).get_format_instructions()
+    except Exception as e:
+        print("Couldn't get formatting instructions. Exception: ", e)
+
+    prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", prompts['planner_prompt']),
+                ("human", "{user_query}")
+            ]).partial(data_path=data_path, format_instructions=format_instructions) 
+
+    plan = get_plan(llm, prompt, user_query)
 
     print(plan.content)
     
