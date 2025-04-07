@@ -1,14 +1,17 @@
 import datetime
+from dotenv import load_dotenv
 import os
 import pandas as pd
 import sys
 from typing import List
 from config import Config
 from langchain_ollama import ChatOllama
+from langchain.chat_models import ChatOpenAI
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.exceptions import OutputParserException
 from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTemplate
 from pydantic import BaseModel, Field
+import argparse
 
 # Define desired output structure
 class Step(BaseModel):
@@ -47,6 +50,33 @@ def load_prompts(prompt_paths_dict):
 
     return prompt_dict 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run planner with LLM backend")
+    parser.add_argument('--test', action="store_true", help="Use a test query")
+    parser.add_argument('--ollama', action="store_true", help="Use ollama backend")
+    parser.add_argument('--openrouter', action="store_true", help="Use openrouter backend")
+    parser.add_arugment("--model", type=str, help="Model name")
+    return parser.parse_args()
+
+def get_llm(args):
+    model = args.model or "meta-llama/llama-4-maverick:free"
+
+    if args.openrouter and args.ollama:
+        raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
+
+    if args.openrouter:
+        api_key = os.getenv("OPENROUTER_API_KEY")
+        base_url = os.getenv("OPENROUTER_BASE_URL")
+        
+        return ChatOpenAI(
+                openai_api_key=api_key,
+                openai_api_base=base_url,
+                model_name=str(model)
+                )
+
+    elif args.ollama:
+        return ChatOllama(model="gemma3:12b")    
+        
 def get_plan(config: Config):
     prompt_paths = config.get_prompt_paths() # load system prompts
     prompts :dict[str, str] = load_prompts(prompt_paths) # load prompts. store in a dictionary
@@ -81,6 +111,7 @@ def get_plan(config: Config):
     return response
 
 if __name__ == "__main__":
+    load_dotenv()
     config = Config()
     plan = get_plan(config)
 
