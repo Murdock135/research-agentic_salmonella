@@ -6,7 +6,7 @@ import sys
 from typing import List
 from config import Config
 from langchain_ollama import ChatOllama
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.exceptions import OutputParserException
 from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTemplate
@@ -25,6 +25,14 @@ class Plan(BaseModel):
     """Information about the the steps in a plan to answer the user query"""
     steps: List[Step]
 
+    def pretty_print(self):
+        for i, step in enumerate(self.steps):
+            print(f"Step {i}")
+            print(f"Description: {step.step_description}")
+            print(f"Datasets: {step.datasets}")
+            print(f"Rationale: {step.rationale}")
+            print(f"Tast Type: {step.task_type}")
+            print()
 
 def load_prompts(prompt_paths_dict):
     planner_prompt_path = prompt_paths_dict['planner_prompt_path'] 
@@ -57,7 +65,6 @@ def get_llm(args):
     if args.openrouter:
         api_key = os.getenv("OPENROUTER_API_KEY")
         base_url = os.getenv("OPENROUTER_BASE_URL")
-        breakpoint()        
         return ChatOpenAI(
                 openai_api_key=api_key,
                 openai_api_base=base_url,
@@ -78,7 +85,6 @@ def get_user_query(args):
     return user_query
        
 def get_plan(llm, prompt, user_query, parser):
-              
     chain = prompt | llm | parser
 
     # get response
@@ -112,7 +118,8 @@ if __name__ == "__main__":
 
     plan = get_plan(llm, prompt, user_query, parser)
 
-    print(plan)
+    # print(plan)
+    plan.pretty_print()
     
     # Save response
     now = datetime.datetime.now()
