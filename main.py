@@ -1,5 +1,18 @@
-from config import Config
+
+import datetime
 from dotenv import load_dotenv
+import os
+import pandas as pd
+import sys
+from typing import List
+from config import Config
+from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.exceptions import OutputParserException
+from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTemplate
+from pydantic import BaseModel, Field
+import argparse
 
 def get_llm(args):
     model = args.model or "meta-llama/llama-4-maverick:free"
@@ -18,6 +31,11 @@ def get_llm(args):
 
     elif args.ollama:
         return ChatOllama(model="gemma3:12b")    
+
+def pretty_print_llms(llm_dict):
+    for llm_name, llm_obj in llm_dict.items():
+        print(f"{llm_name}: {llm_obj}")
+        print()
 
 def load_prompts(prompt_paths_dict):
     planner_prompt_path = prompt_paths_dict['planner_prompt_path'] 
@@ -43,3 +61,9 @@ def parse_args():
 
 if __name__=="__main__":
     load_dotenv()
+    args = parse_args()
+    
+    llm_names = ['explorer', 'analyzer', 'planner']
+    llms: dict = {llm_name: get_llm(args) for llm_name in llm_names}
+
+    pretty_print_llms(llms)
