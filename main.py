@@ -43,7 +43,11 @@ def load_prompts(prompt_paths_dict):
 
     # complete the dict later
     prompt_dict = {
-            'planner_prompt': None,
+        'explorer_prompt': None,
+        'analyzer_prompt': None,
+        'planner_prompt': None,
+        'executor_prompt': None,
+        'aggregator_prompt': None
             }
 
     with open(planner_prompt_path, 'r') as f:
@@ -62,8 +66,9 @@ def parse_args():
 if __name__=="__main__":
     load_dotenv()
     args = parse_args()
+    config = Config()
     
-    llm_names = ['explorer', 'analyzer', 'planner']
+    llm_names = ['explorer', 'analyzer', 'planner', 'executor', 'aggregator']
     llms: dict = {llm_name: get_llm(args) for llm_name in llm_names}
 
     pretty_print_llms(llms)
