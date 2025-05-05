@@ -13,6 +13,8 @@ from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTempla
 from pydantic import BaseModel, Field
 import argparse
 
+from utils import load_prompts
+
 # Define desired output structure
 class Step(BaseModel):
     """Information about a step"""
@@ -34,20 +36,6 @@ class Plan(BaseModel):
             print(f"Tast Type: {step.task_type}")
             print()
 
-def load_prompts(prompt_paths_dict):
-    planner_prompt_path = prompt_paths_dict['planner_prompt_path'] 
-    # code for other prompt paths here
-
-    # complete the dict later
-    prompt_dict = {
-            'planner_prompt': None,
-            }
-
-    with open(planner_prompt_path, 'r') as f:
-        prompt_dict['planner_prompt'] = f.read()
-
-    return prompt_dict 
-
 def parse_args():
     parser = argparse.ArgumentParser(description="Run planner with LLM backend")
     parser.add_argument('--test', action="store_true", help="Use a test query")
@@ -62,7 +50,10 @@ def get_llm(args):
     if args.openrouter and args.ollama:
         raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
 
-    if args.openrouter:
+    if args.ollama:
+        return ChatOllama(model="gemma3:12b")    
+    
+    else:
         api_key = os.getenv("OPENROUTER_API_KEY")
         base_url = os.getenv("OPENROUTER_BASE_URL")
         return ChatOpenAI(
@@ -70,9 +61,6 @@ def get_llm(args):
                 openai_api_base=base_url,
                 model_name=str(model)
                 )
-
-    elif args.ollama:
-        return ChatOllama(model="gemma3:12b")    
 
 def get_user_query(args):
     if args.test:
@@ -89,7 +77,27 @@ def get_plan(llm, prompt, user_query, parser):
 
     # get response
     response = chain.invoke({"user_query": user_query})  
-    return response
+    return chain, response
+
+def generate_plan(llm, prompt_text, user_query, data_path):
+    parser = PydanticOutputParser(pydantic_object=Plan)
+    
+    # Format instructions
+    try:
+        format_instructions = parser.get_format_instructions()
+    except Exception as e:
+        print("Couldn't get formatting instructions. Exception: ", e)
+    
+    prompt = ChatPromptTemplate.from_messages(
+        [ 
+            ("system", prompt_text),
+            ("human", "{user_query}")
+        ]).partial(data_path=data_path, format_instructions=format_instructions)
+
+    chain, plan = get_plan(llm, prompt, user_query, parser)
+    
+    return chain, plan
+        
 
 if __name__ == "__main__":
     args = parse_args()
@@ -100,7 +108,7 @@ if __name__ == "__main__":
     prompts: dict[str, str] = load_prompts(prompt_paths)
     data_path = config.SELECTED_DATA_DIR
     user_query = get_user_query(args)
-   
+       
     # Parser
     parser = PydanticOutputParser(pydantic_object=Plan)
 
@@ -124,7 +132,7 @@ if __name__ == "__main__":
     # Save response
     now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
-    filename = os.path.join(config.PLANNER_RESPONSES_DIR, f"p_response_{timestamp}.txt")
+    filename = os.path.join(config.PLANNER_OUTPUT_DIR, f"p_response_{timestamp}.txt")
 
     with open(filename, 'w') as f:
         f.write(str(plan))
