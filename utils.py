@@ -26,24 +26,37 @@ def load_dataset(file_path, sheet_name=None):
     else:
         raise ValueError("Unsupported file format or missing sheet name for Excel file.")
     
-def get_llm(args):
-    model = args.model or "meta-llama/llama-4-maverick:free"
+def get_llm(args=None):
+    # If args is None, create a default namespace
+    if args is None:
+        import argparse
+        args = argparse.Namespace(openrouter=False, ollama=False, model="meta-llama/llama-4-maverick:free")
 
     if args.openrouter and args.ollama:
         raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
 
-    elif args.ollama:
-        return ChatOllama(model="gemma3:12b")   
-    
+    model = args.model or "meta-llama/llama-4-maverick:free"
+
+    if args.ollama:
+        return ChatOllama(model=model)
     else:
         api_key = os.getenv("OPENROUTER_API_KEY")
         base_url = os.getenv("OPENROUTER_BASE_URL")
         return ChatOpenAI(
-                openai_api_key=api_key,
-                openai_api_base=base_url,
-                model_name=str(model)
-                )
+            openai_api_key=api_key,
+            openai_api_base=base_url,
+            model_name=model
+        )
+        
+def get_user_query(args):
+    if args.test:
+        user_query = "What is the correlation between social vulnerability and salmonella rates?"
+        print("Using test query: ", user_query)
+    else:
+        while True:
+            user_query = input("Enter your query:\n")
 
+    return user_query
 
 # Tests
 if __name__ == "__main__":

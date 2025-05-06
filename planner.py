@@ -13,7 +13,7 @@ from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTempla
 from pydantic import BaseModel, Field
 import argparse
 
-from utils import get_llm
+from utils import get_llm, get_user_query
 
 # Define desired output structure
 class Step(BaseModel):
@@ -44,15 +44,7 @@ def parse_args():
     parser.add_argument("--model", type=str, help="Model name")
     return parser.parse_args()
 
-def get_user_query(args):
-    if args.test:
-        user_query = "What is the correlation between social vulnerability and salmonella rates?"
-        print("Using test query: ", user_query)
-    else:
-        while True:
-            user_query = input("Enter your query:\n")
 
-    return user_query
        
 def get_plan(llm, prompt, user_query, parser):
     chain = prompt | llm | parser

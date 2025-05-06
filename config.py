@@ -2,9 +2,13 @@ import os
 import datetime
 
 from utils import load_text
+from load_env import load_env_vars
 
 class Config:
     def __init__(self):
+        # Load environment variables
+        load_env_vars()
+        
         # Set the base directory to the directory of this file
         self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         
