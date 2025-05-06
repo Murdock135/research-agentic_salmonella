@@ -13,8 +13,6 @@ from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTempla
 from pydantic import BaseModel, Field
 import argparse
 
-from utils import load_prompts
-
 # Define desired output structure
 class Step(BaseModel):
     """Information about a step"""
@@ -104,27 +102,13 @@ if __name__ == "__main__":
     load_dotenv()
     config = Config()
     llm = get_llm(args)
-    prompt_paths = config.get_prompt_paths()
-    prompts: dict[str, str] = load_prompts(prompt_paths)
+    prompts: dict[str, str] = config.load_prompts()
     data_path = config.SELECTED_DATA_DIR
     user_query = get_user_query(args)
-       
-    # Parser
-    parser = PydanticOutputParser(pydantic_object=Plan)
-
-    # Format instructions
-    try:
-        format_instructions = parser.get_format_instructions()
-    except Exception as e:
-        print("Couldn't get formatting instructions. Exception: ", e)
-
-    prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", prompts['planner_prompt']),
-                ("human", "{user_query}")
-            ]).partial(data_path=data_path, format_instructions=format_instructions) 
-
-    plan = get_plan(llm, prompt, user_query, parser)
+    
+    # Generate plan
+    prompt_text = prompts['planner_prompt']
+    chain, plan = generate_plan(llm, prompt_text, user_query, data_path)
 
     # print(plan)
     plan.pretty_print()
