@@ -33,7 +33,7 @@ class Config:
         self.SOCIOECONO_SALMONELLA_DIR = os.path.join(self.PROCESSED_DATA_DIR, 'salmonella_population')
 
         # Selected data directories
-        self.SELECTED_DATA_DIR = os.path.join(self.RAW_DATA_DIR, 'selected_data')
+        self.SELECTED_DATA_DIR = os.path.join(self.BASE_DIR, 'selected_data')
         self.SELECTED_MMG_DIR = os.path.join(self.SELECTED_DATA_DIR, 'mmg')
         self.SELECTED_NORS_DIR = os.path.join(self.SELECTED_DATA_DIR, 'nors')
         self.SELECTED_SVI_DIR = os.path.join(self.SELECTED_DATA_DIR, 'svi')

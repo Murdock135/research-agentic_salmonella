@@ -13,6 +13,8 @@ from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTempla
 from pydantic import BaseModel, Field
 import argparse
 
+from utils import get_llm
+
 # Define desired output structure
 class Step(BaseModel):
     """Information about a step"""
@@ -41,24 +43,6 @@ def parse_args():
     parser.add_argument('--openrouter', action="store_true", help="Use openrouter backend")
     parser.add_argument("--model", type=str, help="Model name")
     return parser.parse_args()
-
-def get_llm(args):
-    model = args.model or "meta-llama/llama-4-maverick:free"
-
-    if args.openrouter and args.ollama:
-        raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
-
-    if args.ollama:
-        return ChatOllama(model="gemma3:12b")    
-    
-    else:
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        base_url = os.getenv("OPENROUTER_BASE_URL")
-        return ChatOpenAI(
-                openai_api_key=api_key,
-                openai_api_base=base_url,
-                model_name=str(model)
-                )
 
 def get_user_query(args):
     if args.test:

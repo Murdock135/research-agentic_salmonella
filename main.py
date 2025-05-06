@@ -14,23 +14,9 @@ from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTempla
 from pydantic import BaseModel, Field
 import argparse
 
-def get_llm(args):
-    model = args.model or "meta-llama/llama-4-maverick:free"
+from utils import get_llm
 
-    if args.openrouter and args.ollama:
-        raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
-
-    if args.openrouter:
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        base_url = os.getenv("OPENROUTER_BASE_URL")
-        return ChatOpenAI(
-                openai_api_key=api_key,
-                openai_api_base=base_url,
-                model_name=str(model)
-                )
-
-    elif args.ollama:
-        return ChatOllama(model="gemma3:12b")    
+ 
 
 def pretty_print_llms(llm_dict):
     for llm_name, llm_obj in llm_dict.items():
