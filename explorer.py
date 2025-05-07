@@ -7,6 +7,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chat_models import init_chat_model
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_openai import ChatOpenAI
+import os
 
 TOOLS = [
     'read_file',
@@ -54,6 +55,12 @@ def recursive_file_search(func, root_dir):
     for i in range(iter):
         pass
     
+def get_data_paths(root):
+    for dirpath, dirnames, filenames in os.walk(root):
+        print("Directory:", dirpath)
+        print("Subdirectories:", dirnames)
+        print("Files:", filenames)
+        
     
     
 if __name__ == "__main__":
