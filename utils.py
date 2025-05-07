@@ -1,6 +1,7 @@
 # utils.py
 import pandas as pd
 import os
+import subprocess
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 
@@ -25,6 +26,65 @@ def load_dataset(file_path, sheet_name=None):
         return pd.read_excel(file_path, sheet_name=sheet_name)
     else:
         raise ValueError("Unsupported file format or missing sheet name for Excel file.")
+
+def get_data_paths(root):
+    tree_str = ""
+    for dirpath, dirnames, filenames in os.walk(root):
+        print("Directory:", dirpath)
+        print("Subdirectories:", dirnames)
+        print("Files:", filenames)
+        
+        tree_str += f"Directory: {dirpath}\n"
+        tree_str += f"Subdirectories: {dirnames}\n"
+        tree_str += f"Files: {filenames}\n"
+        tree_str += "\n"
+        
+    return tree_str
+
+def get_data_paths_bash_tree(root):
+    try:
+        output = subprocess.check_output(['tree', root], text=True)
+    except Exception as e:
+        output = f"Error running tree command: {e}"
+    return output
+
+def get_df_heads(root_data_dir):
+    datasets = []
+    df_heads_markdown = []
+    text = ""
+    
+    for dirpath, dirname, files in os.walk(root_data_dir):
+        if len(files) == 0:
+            continue
+        for file in files:
+            file_path = os.path.join(dirpath, file)
+            if file.endswith('.csv'):
+                try:
+                    df = load_dataset(file_path)
+                    df_head = df.head().to_markdown()
+                    df_heads_markdown.append(f"File: {file_path}\n{df_head}")
+                    datasets.append(file_path)
+                    
+                    text += f"File: {file_path}\n{df_head}\n\n"
+                except Exception as e:
+                    print(f"Error loading {file_path}: {e}")
+            
+            if file.endswith('.xlsx'):
+                try:
+                    # Load all sheets
+                    xls = pd.ExcelFile(file_path)
+                    for sheet_name in xls.sheet_names:
+                        df = pd.read_excel(xls, sheet_name=sheet_name)
+                        df_head = df.head().to_markdown()
+                        df_heads_markdown.append(f"File: {file_path}, Sheet: {sheet_name}\n{df_head}")
+                        datasets.append(file_path)
+                        
+                        text += f"File: {file_path}, Sheet: {sheet_name}\n{df_head}\n\n"
+                except Exception as e:
+                    print(f"Error loading {file_path}: {e}")
+    
+    return text
+
     
 def get_llm(args=None):
     # If args is None, create a default namespace

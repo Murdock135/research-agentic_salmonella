@@ -19,6 +19,9 @@ class Config:
         self.ANALYZER_PROMPT_PATH = os.path.join(self.PROMPT_DIR, 'analyzer_message.txt')
         self.EXECUTOR_PROMPT_PATH = os.path.join(self.PROMPT_DIR, 'executor_message.txt')
         self.AGGREGATOR_PROMPT_PATH = os.path.join(self.PROMPT_DIR, 'aggregator_message.txt')
+        
+        # Path to user messages
+        self.EXPLORER_MESSAGE_PATH = os.path.join(self.PROMPT_DIR, 'explorer_user_message.txt')
 
         # Data directories
         self.DATA_DIR = os.path.join(self.BASE_DIR, 'data')
@@ -83,6 +86,11 @@ class Config:
             'analyzer_prompt': load_text(self.ANALYZER_PROMPT_PATH),
             'executor_prompt': load_text(self.EXECUTOR_PROMPT_PATH),
             'aggregator_prompt': load_text(self.AGGREGATOR_PROMPT_PATH)
+        }
+        
+    def load_user_messages(self):
+        return {
+            'explorer_user_message': load_text(self.EXPLORER_MESSAGE_PATH)
         }
         
     def create_output_directory_for_run(self):
