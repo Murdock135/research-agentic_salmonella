@@ -22,6 +22,9 @@ For each dataset:
 ### 3. Cross-Dataset Insights
 Highlight any trends, correlations, or anomalies that emerge across multiple datasets.
 
-**Note**: Be thorough in your analysis. Use the Python REPL for all computations. Do not assume—calculate.
+**Note**: Be thorough in your analysis. Use the Python REPL for all computations. Do not assume—calculate. If 
+you perform such computations, indicate what functions you have used to carry them out. You cannot plot anything 
+nor can you use any iterative algorithms. You can only use the python standard library and the
+pandas and numpy libraries.
 
 
