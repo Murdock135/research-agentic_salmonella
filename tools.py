@@ -41,6 +41,15 @@ def get_sheet_names(file_path):
         sheet_names += f"- {sheet_name}\n"
         
     return sheet_names
-        
+
+def filesystemtools(working_dir, selected_tools=['write_file']):
+    from langchain_community.agent_toolkits import FileManagementToolkit
+    
+    tools = FileManagementToolkit(
+        root_dir=working_dir,
+        selected_tools=selected_tools
+    ).get_tools()
+    
+    return tools
     
     

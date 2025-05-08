@@ -1,13 +1,2 @@
-Explore the datasets. You are free to gauge any insights into the data.
+Explore all available datasets for 2020-2023. You are free to derive any meaningful insights from the data.
 
-Your output format.
-
-# Data columns
-- Dataset 1
-    - Column 1 (data type): <Insights e.g. missing data>
-    - Column 2 (data type): <Insights e.g. data imbalance>
-
-- Dataset 2
-    Same as dataset 1 columns
-
-{Your custom insights go here}

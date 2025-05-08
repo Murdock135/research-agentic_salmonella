@@ -33,7 +33,6 @@ if __name__ == "__main__":
     user_messages = config.load_user_messages()
     explorer_prompt = prompts['explorer_prompt']
     user_message = user_messages['explorer_user_message']
-    messages = [HumanMessage(user_message)]
         
     # Use LLM to get dataset file names
     working_dir = config.SELECTED_DATA_DIR
@@ -45,7 +44,8 @@ if __name__ == "__main__":
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", explorer_prompt),
-            ("human", "{user_query}")
+            ("human", "{user_query}"),
+            ("placeholder", "{agent_scratchpad}")
         ]
     ).partial(
         tree=tree,
@@ -61,43 +61,12 @@ if __name__ == "__main__":
     )
     
     tools = [mytools.get_sheet_names, mytools.load_dataset, pythonREPLtool]
-    llm_with_tools = llm.bind_tools(tools)
-    chain = prompt | llm_with_tools 
+    agent = create_tool_calling_agent(llm.with_retry(), tools, prompt)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=True)
     
-    response = chain.invoke({"user_query": user_message})
-    messages.append(response)
-    tool_calls = response.tool_calls
-    print("Tool Calls:\n", tool_calls)
-
-    tool_mapping = {
-        "python_repl": pythonREPLtool,
-        "get_sheet_names": mytools.get_sheet_names,
-        "load_dataset": mytools.load_dataset
-    }
-
-    for tool_call in tool_calls:
-        # Use the lower-case version of the tool name for mapping lookup
-        selected_tool = tool_mapping.get(tool_call["name"].lower())
-        if selected_tool:
-            # The example from the docs uses .invoke, so we mimic that interface:
-            tool_msg = selected_tool.invoke(tool_call)
-            messages.append(tool_msg)
-            print(f"Result from {tool_call['name']}:", tool_msg)
-        else:
-            print(f"Tool {tool_call['name']} is not supported.")
-
-    print("="* 50)
-    print("Messages")
-    for message in messages:
-        print("message:")
-        print(message)
+    for step in agent_executor.stream({"user_query": user_message}):
+        print(step)   
     
-    # breakpoint()
-    # Final output
-    response = llm_with_tools.invoke(messages)
-    print("="*50)
-    print("Response")
-    print(response)
     
 
 
