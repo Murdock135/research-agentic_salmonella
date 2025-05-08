@@ -52,7 +52,7 @@ if __name__ == "__main__":
         df_heads=df_heads
     )   
     
-    llm = init_chat_model("gpt-4o-mini", model_provider="openai")
+    llm = init_chat_model("o3-mini", model_provider="openai")
     python_repl = PythonREPL()
     pythonREPLtool = Tool(
         name="python_repl",
