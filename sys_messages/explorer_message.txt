@@ -22,9 +22,14 @@ For each dataset:
 ### 3. Cross-Dataset Insights
 Highlight any trends, correlations, or anomalies that emerge across multiple datasets.
 
-**Note**: Be thorough in your analysis. Use the Python REPL for all computations. Do not assume—calculate. If 
+**Note**: Be thorough in your analysis. Quantify everything instead of using qualitative remarks like
+"dataset 1's column A was almost filled with data". Use the Python REPL for all computations. Do not assume—calculate. If 
 you perform such computations, indicate what functions you have used to carry them out. You cannot plot anything 
 nor can you use any iterative algorithms. You can only use the python standard library and the
 pandas and numpy libraries.
+
+- Do not use the get_sheets tool on CSV files.
+- When loading a sheet from an excel file, do not assume the name of the sheet. ALWAYS check 
+the names of the sheets using the get_sheets tool before loading the sheet as a dataframe.
 
 

@@ -12,9 +12,15 @@ def load_dataset(file_path, sheet_name=None):
     import pandas as pd
     global df
     if file_path.endswith('.csv'):
-        df = pd.read_csv(file_path)
+        try:
+            df = pd.read_csv(file_path)
+        except Exception as e:
+            return f"PythonError: {e}"
     elif file_path.endswith('.xlsx') and sheet_name:
-        df = pd.read_excel(file_path, sheet_name=sheet_name)
+        try:
+            df = pd.read_excel(file_path, sheet_name=sheet_name)
+        except Exception as e:
+            return f"PythonError: {e}"
     else:
         raise ValueError("Unsupported file format or missing sheet name for Excel file.")
     
@@ -33,9 +39,12 @@ def get_sheet_names(file_path):
     
     sheet_names = "Sheet names:\n"
     if not file_path.endswith('.xlsx'):
-        raise ValueError("Provided file is not an excel file.")
+        return ("Provided file is not an excel file.")
     
-    excel_file = pd.ExcelFile(file_path)
+    try:
+        excel_file = pd.ExcelFile(file_path)
+    except Exception as e:
+        return f"PythonError: {e}"
     
     for sheet_name in excel_file.sheet_names:
         sheet_names += f"- {sheet_name}\n"
