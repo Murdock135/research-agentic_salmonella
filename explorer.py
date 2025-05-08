@@ -60,9 +60,9 @@ if __name__ == "__main__":
         description="A Python REPL that can execute Python code. Use this to run Python code and get the result.",
     )
     
-    tools = [mytools.load_dataset, pythonREPLtool]
+    tools = [mytools.load_dataset, mytools.get_sheet_names, pythonREPLtool]
     agent = create_tool_calling_agent(llm, tools, prompt)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=False)
+    agent_executor = AgentExecutor(name='Explorer', agent=agent, tools=tools, verbose=True, return_intermediate_steps=False)
     
     for step in agent_executor.stream({"user_query": user_message}):
         print(step)   

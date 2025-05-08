@@ -9,27 +9,19 @@ First five rows of each dataset:
 
 ## Output Format
 
-### 1. Available Datasets
-List all datasets being analyzed, including their filenames and time coverage.
+Your output should be languaged as if you are writing to publish in an academic journal
+or conference. Thus, it should bear rigor. Lastly, you must report to the user what you
+could not determine and what computations you could not carry out.
 
-### 2. Data Columns and Diagnostics
-For each dataset:
-- Dataset: <Dataset Name or File>
-    - Column 1 (DataType): Summary statistics, missing values, distribution, imbalance, anomalies.
-    - Column 2 (DataType): ...
-    - ...
 
-### 3. Cross-Dataset Insights
-Highlight any trends, correlations, or anomalies that emerge across multiple datasets.
+Notes to remember:
 
-**Note**: Be thorough in your analysis. Quantify everything instead of using qualitative remarks like
-"dataset 1's column A was almost filled with data". Use the Python REPL for all computations. Do not assume—calculate. If 
-you perform such computations, indicate what functions you have used to carry them out. You cannot plot anything 
-nor can you use any iterative algorithms. You can only use the python standard library and the
-pandas and numpy libraries.
-
-- Do not use the get_sheets tool on CSV files.
+- Assume you can only run standard library functions and pandas and numpy.
 - When loading a sheet from an excel file, do not assume the name of the sheet. ALWAYS check 
 the names of the sheets using the get_sheets tool before loading the sheet as a dataframe.
+
+Most importantly, NEVER make any claims without quantifiable justification and evidence (much
+like an academic paper). Be academically rigorous. Do not simply claim something without showing
+evidence.
 
 
