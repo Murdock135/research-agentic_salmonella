@@ -108,15 +108,25 @@ def get_llm(args=None):
             model_name=model
         )
         
-def get_user_query(args):
-    if args.test:
+def get_user_query(args=None):
+    if args is not None and args.test:
         user_query = "What is the correlation between social vulnerability and salmonella rates?"
         print("Using test query: ", user_query)
     else:
-        while True:
-            user_query = input("Enter your query:\n")
+        user_query = input("Enter your query:\n")
 
     return user_query
+
+def parse_args():
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Run Agentic system for QA")
+    parser.add_argument('--test', action="store_true", help="Use a test query")
+    parser.add_argument('--ollama', action="store_true", help="Use ollama backend")
+    parser.add_argument('--openrouter', action="store_true", help="Use openrouter backend")
+    parser.add_argument("--model", type=str, help="Model name")
+    return parser.parse_args()
+    
 
 # Tests
 if __name__ == "__main__":

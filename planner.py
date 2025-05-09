@@ -11,9 +11,14 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.exceptions import OutputParserException
 from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTemplate
 from pydantic import BaseModel, Field
-import argparse
 
-from utils import get_llm, get_user_query
+from utils import (
+    get_llm, 
+    get_user_query, 
+    parse_args,
+    get_data_paths_bash_tree,
+    get_df_heads
+)
 
 # Define desired output structure
 class Step(BaseModel):
@@ -35,16 +40,6 @@ class Plan(BaseModel):
             print(f"Rationale: {step.rationale}")
             print(f"Tast Type: {step.task_type}")
             print()
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Run planner with LLM backend")
-    parser.add_argument('--test', action="store_true", help="Use a test query")
-    parser.add_argument('--ollama', action="store_true", help="Use ollama backend")
-    parser.add_argument('--openrouter', action="store_true", help="Use openrouter backend")
-    parser.add_argument("--model", type=str, help="Model name")
-    return parser.parse_args()
-
-
        
 def get_plan(llm, prompt, user_query, parser):
     chain = prompt | llm | parser
@@ -61,13 +56,20 @@ def generate_plan(llm, prompt_text, user_query, data_path):
         format_instructions = parser.get_format_instructions()
     except Exception as e:
         print("Couldn't get formatting instructions. Exception: ", e)
+        
+    tree = get_data_paths_bash_tree(data_path)
+    df_heads = get_df_heads(data_path)
     
     prompt = ChatPromptTemplate.from_messages(
         [ 
             ("system", prompt_text),
             ("human", "{user_query}")
-        ]).partial(data_path=data_path, format_instructions=format_instructions)
+        ]).partial(
+            tree=tree,
+            df_heads=df_heads, 
+            format_instructions=format_instructions)
 
+    breakpoint()
     chain, plan = get_plan(llm, prompt, user_query, parser)
     
     return chain, plan

@@ -12,9 +12,8 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.exceptions import OutputParserException
 from langchain_core.prompts import load_prompt, ChatPromptTemplate, PromptTemplate
 from pydantic import BaseModel, Field
-import argparse
 
-from utils import get_llm
+from utils import get_llm, parse_args
 
  
 
@@ -41,13 +40,7 @@ def load_prompts(prompt_paths_dict):
 
     return prompt_dict 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Run Agentic system for QA")
-    parser.add_argument('--test', action="store_true", help="Use a test query")
-    parser.add_argument('--ollama', action="store_true", help="Use ollama backend")
-    parser.add_argument('--openrouter', action="store_true", help="Use openrouter backend")
-    parser.add_argument("--model", type=str, help="Model name")
-    return parser.parse_args()
+
 
 if __name__=="__main__":
     load_dotenv()
