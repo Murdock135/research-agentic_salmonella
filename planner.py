@@ -20,6 +20,9 @@ from utils import (
     get_df_heads
 )
 
+MODEL = "meta-llama/llama-4-maverick:free"
+PROVIDER = "openrouter"
+
 # Define desired output structure
 class Step(BaseModel):
     """Information about a step"""
@@ -69,17 +72,20 @@ def generate_plan(llm, prompt_text, user_query, data_path):
             df_heads=df_heads, 
             format_instructions=format_instructions)
 
-    breakpoint()
     chain, plan = get_plan(llm, prompt, user_query, parser)
     
     return chain, plan
         
 
+# Use for testing generate_plan()
 if __name__ == "__main__":
-    args = parse_args()
     load_dotenv()
+    args = parse_args()
+    model = MODEL
+    provider = PROVIDER
+    
     config = Config()
-    llm = get_llm(args)
+    llm = get_llm(model, provider)
     prompts: dict[str, str] = config.load_prompts()
     data_path = config.SELECTED_DATA_DIR
     user_query = get_user_query(args)
@@ -91,10 +97,4 @@ if __name__ == "__main__":
     # print(plan)
     plan.pretty_print()
     
-    # Save response
-    now = datetime.datetime.now()
-    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
-    filename = os.path.join(config.PLANNER_OUTPUT_DIR, f"p_response_{timestamp}.txt")
 
-    with open(filename, 'w') as f:
-        f.write(str(plan))

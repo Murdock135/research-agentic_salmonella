@@ -101,32 +101,67 @@ def get_df_heads(root_data_dir):
     return text
 
     
-def get_llm(args=None):
-    import os
-    from langchain_ollama import ChatOllama
-    from langchain_openai import ChatOpenAI
+# def get_llm(args=None):
+#     import os
+#     from langchain_ollama import ChatOllama
+#     from langchain_openai import ChatOpenAI
 
     
-    # If args is None, create a default namespace
-    if args is None:
-        import argparse
-        args = argparse.Namespace(openrouter=False, ollama=False, model="meta-llama/llama-4-maverick:free")
+#     # If args is None, create a default namespace
+#     if args is None:
+#         import argparse
+#         args = argparse.Namespace(openrouter=True, ollama=False, model="meta-llama/llama-4-maverick:free")
 
-    if args.openrouter and args.ollama:
-        raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
+#     if args.openrouter and args.ollama:
+#         raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
 
-    model = args.model or "meta-llama/llama-4-maverick:free"
+#     model = args.model or "meta-llama/llama-4-maverick:free"
 
-    if args.ollama:
-        return ChatOllama(model=model)
-    else:
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        base_url = os.getenv("OPENROUTER_BASE_URL")
+#     if args.ollama:
+#         return ChatOllama(model=model)
+#     else:
+#         api_key = os.getenv("OPENROUTER_API_KEY")
+#         base_url = os.getenv("OPENROUTER_BASE_URL")
+#         return ChatOpenAI(
+#             openai_api_key=api_key,
+#             openai_api_base=base_url,
+#             model_name=model
+#         )
+
+def get_llm(model='gpt-4o', provider='openai'):
+    if provider=='openai':
+        from langchain.chat_models import init_chat_model
+        return init_chat_model(model=model, model_provider=provider)
+    
+    elif provider=='openrouter':
+        import os
+        from langchain_openai import ChatOpenAI
+        
+        try:
+            api_key = os.getenv('OPENROUTER_API_KEY')
+        except:
+            raise ValueError("OPENROUTER API NOT FOUND")
+        
+        try:
+            base_url = os.getenv('OPENROUTER_BASE_URL')
+        except:
+            raise ValueError("OPENROUTER BASE URL NOT FOUND")
+        
+        model = model or "meta-llama/llama-4-maverick:free"
         return ChatOpenAI(
             openai_api_key=api_key,
             openai_api_base=base_url,
             model_name=model
         )
+        
+    
+    elif provider == 'ollama':
+        from langchain_ollama import ChatOllama
+        return ChatOllama(model=model)
+    
+    else:
+        raise ValueError(f"Provider '{provider} not supported. Please choose 'openai', 'openrouter', or 'ollama'.")
+        
         
 def get_user_query(args=None):
     if args is not None and args.test:
