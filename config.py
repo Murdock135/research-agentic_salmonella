@@ -12,6 +12,9 @@ class Config:
         # Set the base directory to the directory of this file
         self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         
+        # Path to llm config toml
+        self.LLM_CONFIG_PATH = os.path.join(self.BASE_DIR, 'config.toml')
+        
         # Path to system messages
         self.PROMPT_DIR = os.path.join(self.BASE_DIR, 'sys_messages')
         self.PLANNER_PROMPT_PATH = os.path.join(self.PROMPT_DIR, 'planner_message.txt')

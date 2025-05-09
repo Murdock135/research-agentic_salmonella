@@ -100,33 +100,6 @@ def get_df_heads(root_data_dir):
     
     return text
 
-    
-# def get_llm(args=None):
-#     import os
-#     from langchain_ollama import ChatOllama
-#     from langchain_openai import ChatOpenAI
-
-    
-#     # If args is None, create a default namespace
-#     if args is None:
-#         import argparse
-#         args = argparse.Namespace(openrouter=True, ollama=False, model="meta-llama/llama-4-maverick:free")
-
-#     if args.openrouter and args.ollama:
-#         raise ValueError("Please specify only one backend: --openrouter or --ollama. Not both.")
-
-#     model = args.model or "meta-llama/llama-4-maverick:free"
-
-#     if args.ollama:
-#         return ChatOllama(model=model)
-#     else:
-#         api_key = os.getenv("OPENROUTER_API_KEY")
-#         base_url = os.getenv("OPENROUTER_BASE_URL")
-#         return ChatOpenAI(
-#             openai_api_key=api_key,
-#             openai_api_base=base_url,
-#             model_name=model
-#         )
 
 def get_llm(model='gpt-4o', provider='openai'):
     if provider=='openai':
@@ -181,6 +154,14 @@ def parse_args():
     parser.add_argument('--openrouter', action="store_true", help="Use openrouter backend")
     parser.add_argument("--model", type=str, help="Model name")
     return parser.parse_args()
+
+def load_llm_config(path):
+    import tomllib
+    
+    with open(path, mode="rb") as f:
+        llm_config = tomllib.load(f)
+    
+    return llm_config
     
 
 # Tests
