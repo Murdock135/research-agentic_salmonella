@@ -1,9 +1,4 @@
 # utils.py
-import pandas as pd
-import os
-import subprocess
-from langchain_ollama import ChatOllama
-from langchain_openai import ChatOpenAI
 
 def load_text(file_path):
     """Loads text from a file."""
@@ -12,7 +7,22 @@ def load_text(file_path):
 
     return text
 
+def save_text(text, filepath, time_stamp=True):
+    import datetime
+    
+    # Save response
+    now = datetime.datetime.now()
+    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+    
+    if time_stamp:
+        file_path = file_path + timestamp
+
+    with open(file_path, 'w') as f:
+        f.write(text)
+
 def load_dataset(file_path, sheet_name=None):
+    import pandas as pd
+
     """
     Loads a dataset from either a CSV or an Excel sheet.
     Args:
@@ -42,6 +52,8 @@ def get_data_paths(root):
     return tree_str
 
 def get_data_paths_bash_tree(root):
+    import subprocess
+
     try:
         output = subprocess.check_output(['tree', root], text=True)
     except Exception as e:
@@ -49,6 +61,9 @@ def get_data_paths_bash_tree(root):
     return output
 
 def get_df_heads(root_data_dir):
+    import os
+    import pandas as pd
+    
     datasets = []
     df_heads_markdown = []
     text = ""
@@ -87,6 +102,11 @@ def get_df_heads(root_data_dir):
 
     
 def get_llm(args=None):
+    import os
+    from langchain_ollama import ChatOllama
+    from langchain_openai import ChatOpenAI
+
+    
     # If args is None, create a default namespace
     if args is None:
         import argparse
@@ -130,6 +150,7 @@ def parse_args():
 
 # Tests
 if __name__ == "__main__":
+    import os
     from config import Config
     
     config = Config()
