@@ -34,6 +34,8 @@ class Step(BaseModel):
 class Plan(BaseModel):
     """Information about the the steps in a plan to answer the user query"""
     steps: List[Step]
+    wants: str = Field(..., description="Further information you need to make a better plan")
+    misc: str = Field(..., description="Anything else you want the user to know or just a general scratchpad")
 
     def pretty_print(self):
         for i, step in enumerate(self.steps):
@@ -43,6 +45,11 @@ class Plan(BaseModel):
             print(f"Rationale: {step.rationale}")
             print(f"Tast Type: {step.task_type}")
             print()
+        
+        print("Wants:")
+        print(self.wants)
+        print("Misc:")
+        print(self.misc)
        
 def get_plan(llm, prompt, user_query, parser):
     chain = prompt | llm | parser

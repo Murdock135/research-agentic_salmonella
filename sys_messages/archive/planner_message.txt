@@ -10,10 +10,7 @@ First five rows of each dataset:
 {df_heads}
 
 Output Format:
-Return your plan AND your needs (further info you think you need) as a JSON-compatible list of steps + some text about additional info you 
-think you need to make a better plan.
-
-Each step **must adhere to the following schema**:
+Return your plan as a JSON-compatible list of steps. Each step **must adhere to the following schema**:
 - `step_description` (str): A detailed description of what should be done in the step.
 - `datasets` (list of str): The datasets relevant to the step.
 - `rationale` (str): The reason why this step is necessary.
@@ -28,10 +25,6 @@ Each step **must adhere to the following schema**:
   - `ranking`
   - `visualization`
 
-Besides the steps, write a detailed paragraph about your 'wants' (str), stating what further information you need to 
-make a better plan.
-
-Apart from the steps and the wants, you can write anything else you want into a variable called 'misc' (str).
 ---
 
 Your Task:
@@ -40,7 +33,6 @@ Your Task:
 3. Create a step-by-step analytical plan to answer the question.  
    - Each step must conform to the schema (see Output Format section above).  
    - If needed, you may infer steps required to accomplish the task.
-4. State your wants to make your plan better.
 
 ---
 
