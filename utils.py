@@ -155,10 +155,14 @@ def parse_args():
     parser.add_argument("--model", type=str, help="Model name")
     return parser.parse_args()
 
-def load_llm_config(path):
+def load_llm_config(path_to_toml_file):
+    """
+    Takes in a toml file and returns a dictionary
+    with llm models and providers
+    """
     import tomllib
     
-    with open(path, mode="rb") as f:
+    with open(path_to_toml_file, mode="rb") as f:
         llm_config = tomllib.load(f)
     
     return llm_config

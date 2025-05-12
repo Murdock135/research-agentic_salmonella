@@ -2,11 +2,7 @@ from planner import generate_plan
 
 def pipeline(
     user_query: str,
-    planner_llm,
-    explorer_llm,
-    executor_llm,
-    analyzer_llm,
-    aggregator_llm,
+    llms: dict,
     prompts: dict,
     data_path: str,
     
@@ -29,8 +25,8 @@ def pipeline(
     """
     
     # Generate plan
-    prompt_text = prompts['planner_prompt']
-    chain, plan = generate_plan(planner_llm, prompt_text, user_query, data_path)
+    planner_prompt: str = prompts['planner_prompt']
+    chain, plan = generate_plan(llms['planner_llm'], planner_prompt, user_query, data_path)
     
     # Print the plan
     plan.pretty_print()
