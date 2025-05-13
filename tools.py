@@ -1,4 +1,6 @@
 from langchain.tools import tool
+from langchain_community.tools import Tool
+from langchain_experimental.utilities import PythonREPL
 
 @tool
 def load_dataset(file_path, sheet_name=None):
@@ -60,5 +62,14 @@ def filesystemtools(working_dir, selected_tools=['write_file']):
     ).get_tools()
     
     return tools
+
+def getpythonrepltool():
+    python_repl = PythonREPL()
+    pythonREPLtool = Tool(
+        name="python_repl",
+        func=python_repl.run,
+        description="A Python REPL that can execute Python code. Use this to run Python code and get the result.",
+    )
     
+    return pythonREPLtool
     

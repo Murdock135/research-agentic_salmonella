@@ -30,3 +30,4 @@ def pipeline(
     
     # Print the plan
     plan.pretty_print()
+    

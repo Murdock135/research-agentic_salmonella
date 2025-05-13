@@ -96,6 +96,19 @@ class Config:
             'explorer_user_message': load_text(self.EXPLORER_MESSAGE_PATH)
         }
         
+    def load_llm_config(self, path_to_toml_file=None):
+        """
+        Takes in a toml file and returns a dictionary
+        with llm models and providers
+        """
+        import tomllib
+        
+        path_to_toml_file = self.LLM_CONFIG_PATH if path_to_toml_file is None else path_to_toml_file
+        with open(path_to_toml_file, mode="rb") as f:
+            llm_config = tomllib.load(f)
+        
+        return llm_config
+        
     def create_output_directory_for_run(self):
         format = "%d-%m-%Y_%H-%M-%S"
         now = datetime.datetime.now()

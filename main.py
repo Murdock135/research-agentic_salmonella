@@ -27,14 +27,13 @@ if __name__=="__main__":
     args = utils.parse_args()
     config = Config()
     
-    llm_config_path = config.LLM_CONFIG_PATH
-    llm_config = utils.load_llm_config(llm_config_path)
+    llm_config = config.load_llm_config()
     llms: dict = get_llms(llm_config)
     
     user_query = utils.get_user_query(args)
     data_path = config.SELECTED_DATA_DIR
     prompts = config.load_prompts()
-    breakpoint()
+    
     pipeline(
         user_query=user_query,
         llms=llms,

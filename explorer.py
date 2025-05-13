@@ -53,6 +53,8 @@ if __name__ == "__main__":
     )   
     
     llm = init_chat_model("o3-mini", model_provider="openai")
+    
+    #TODO: Use tools.getpythonrepltool instead
     python_repl = PythonREPL()
     pythonREPLtool = Tool(
         name="python_repl",
