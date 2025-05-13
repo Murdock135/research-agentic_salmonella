@@ -38,7 +38,8 @@ if __name__=="__main__":
         user_query=user_query,
         llms=llms,
         prompts=prompts,
-        data_path=data_path
+        data_path=data_path,
+        config_obj=config
     )
     
     

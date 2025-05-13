@@ -1,33 +1,39 @@
 from planner import generate_plan
+from executor import execute
+from config import Config
 
 def pipeline(
     user_query: str,
     llms: dict,
     prompts: dict,
     data_path: str,
+    config_obj: Config
     
-):
-    """
-    Run the entire pipeline for the Agentic system.
-    
-    Args:
-        user_query (str): The user's query.
-        planner_llm: The LLM for planning.
-        explorer_llm: The LLM for exploration.
-        executor_llm: The LLM for execution.
-        analyzer_llm: The LLM for analysis.
-        aggregator_llm: The LLM for aggregation.
-        prompts (dict): A dictionary containing prompt templates.
-        data_path (str): Path to the data directory.
-        
-    Returns:
-        None
-    """
-    
-    # Generate plan
+):  
+    # Prompts
     planner_prompt: str = prompts['planner_prompt']
+    executor_prompt = prompts['executor_prompt']
+    
     chain, plan = generate_plan(llms['planner_llm'], planner_prompt, user_query, data_path)
     
     # Print the plan
     plan.pretty_print()
+    
+    # Pass plan to executor
+    executor_llm = llms['executor_llm']
+    steps = plan.steps
+    print("="*50)
+    for i, step in enumerate(steps):
+        print(f"Step {i} of plan. [Step: {step.step_description}]")
+        print("-"*50)
+        
+        execute(
+            llm=executor_llm,
+            user_message=step.step_description,
+            system_prompt=executor_prompt,
+            config_obj=config_obj
+        )
+        
+        
+        
     

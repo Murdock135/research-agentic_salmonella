@@ -53,8 +53,27 @@ def get_sheet_names(file_path):
         
     return sheet_names
 
+
 def filesystemtools(working_dir, selected_tools=['write_file']):
     from langchain_community.agent_toolkits import FileManagementToolkit
+    
+    TOOLS = [
+    'read_file',
+    'copy_file',
+    'file_search',
+    'list_directory',
+    ]
+    
+    # check tools
+    for tool in selected_tools:
+        if tool not in TOOLS:
+            raise ValueError(f"The tool, {tool} is not supported.\n"
+                             "Please select from {TOOLS}"
+                             )
+    
+    # If selected_tools is not a list, convert to a list        
+    if not isinstance(selected_tools, list):
+        selected_tools=[selected_tools]
     
     tools = FileManagementToolkit(
         root_dir=working_dir,
