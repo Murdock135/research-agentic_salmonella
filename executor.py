@@ -28,8 +28,11 @@ def execute(llm, user_message, system_prompt, config_obj: Config):
     agent = create_tool_calling_agent(llm, _tools, prompt)
     agent_executor = AgentExecutor(name="Executor", agent=agent, tools=_tools, verbose=True)
 
+    output = ""
     for step in agent_executor.stream({"user_query": user_message}):
-        print(step)
+        print(step['output'])
+        output += step['output']
+        output += '\n'
 
 # For testing
 if __name__ == "__main__":
@@ -61,7 +64,7 @@ if __name__ == "__main__":
         user_message = utils.get_user_query()
         print(f"Using query: '{user_message}'")
         
-    execute(llm, user_message, system_prompt)        
-    
+    output = execute(llm, user_message, system_prompt, config)        
+    print(output)
     
     

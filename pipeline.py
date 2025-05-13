@@ -24,6 +24,7 @@ def pipeline(
     steps = plan.steps
     print("="*50)
     for i, step in enumerate(steps):
+        print("-"*50)
         print(f"Step {i} of plan. [Step: {step.step_description}]")
         print("-"*50)
         

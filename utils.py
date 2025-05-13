@@ -138,7 +138,7 @@ def get_llm(model='gpt-4o', provider='openai'):
         
 def get_user_query(args=None):
     if args is not None and args.test:
-        user_query = "What is the correlation between social vulnerability and salmonella rates?"
+        user_query = "What is the correlation between social vulnerability and salmonella rates in recent years?"
         print("Using test query: ", user_query)
     else:
         user_query = input("Enter your query:\n")
